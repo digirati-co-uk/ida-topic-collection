@@ -2,7 +2,7 @@ import base64
 
 from elucidate import manifests_by_topic
 from flask import Flask
-from flask import request, jsonify, make_response, current_app
+from flask import request, jsonify, make_response, current_app, abort
 from iiif import collection_gen, process_manifest
 from logzero import logger
 from flask_cache import Cache
@@ -68,7 +68,7 @@ cache = Cache(app, config={'CACHE_TYPE': 'filesystem', 'CACHE_DIR': './'})
 
 
 def main():
-    app.run(threaded=True, debug=True, port=5030, host='0.0.0.0')
+    app.run(threaded=True, debug=True, port=5000, host='0.0.0.0')
 
 
 @app.route('/metadata', methods=['GET'])
@@ -90,11 +90,14 @@ def metadata():
 @cache.cached(timeout=300)  # 20 second caching.
 def default(topic):
     t = base64.b64decode(topic.encode('utf-8'))
-    logger.info("root request received")
+    logger.info("Request received")
     manifests = [process_manifest(m) for m in (set(manifests_by_topic(topic=t)))]
     collection = collection_gen(resources=manifests, topic_uri=str(t), uri=request.url,
                                 members=True)
-    return jsonify(collection)
+    if collection:
+        return jsonify(collection)
+    else:
+        abort(404)
 
 
 if __name__ == "__main__":
