@@ -50,7 +50,6 @@ def items_by_topic(elucidate, topic):
 
 def manifest_from_annotation(content):
     if isinstance(content['target'], str):
-        # commented out while checking San Ildefonso
         # hack that derives the manifest URI from the canvas URI
         manifest = content['target'].split('canvas')[0] + 'manifest'
     else:
@@ -62,10 +61,8 @@ def manifest_from_annotation(content):
         except TypeError:
             manifest = content['target'][0]['dcterms:isPartOf']['id']
         except KeyError:
-            # commented out while checking San Ildefonso
             # annotations with no dcterms:isPartOf
             manifest = content['target']['source']
-            # return None
     return manifest
 
 
