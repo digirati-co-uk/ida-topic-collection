@@ -68,7 +68,7 @@ cache = Cache(app, config={'CACHE_TYPE': 'filesystem', 'CACHE_DIR': './'})
 
 
 def main():
-    app.run(threaded=True, debug=True, port=5000, host='0.0.0.0')
+    app.run(threaded=True, debug=True, port=5001, host='0.0.0.0')
 
 
 @app.route('/metadata', methods=['GET'])
