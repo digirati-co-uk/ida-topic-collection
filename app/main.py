@@ -8,6 +8,7 @@ from logzero import logger
 from flask_cache import Cache
 from datetime import timedelta
 from functools import update_wrapper
+import settings
 
 
 def crossdomain(origin=None, methods=None, headers=None,
@@ -89,7 +90,12 @@ def metadata():
 @crossdomain(origin='*')  # add CORS
 @cache.cached(timeout=300)  # 20 second caching.
 def default(topic):
-    t = base64.b64decode(topic.encode('utf-8'))
+    if '/' in topic:
+        if not settings.TOPIC_BASE.endswith('/'):
+            settings.TOPIC_BASE += '/'
+        t = ''.join([settings.TOPIC_BASE, topic])
+    else:
+        t = base64.b64decode(topic.encode('utf-8'))
     logger.info("Request received")
     manifests = [process_manifest(m) for m in (set(manifests_by_topic(topic=t)))]
     collection = collection_gen(resources=manifests, topic_uri=str(t), uri=request.url,

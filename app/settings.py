@@ -1,3 +1,3 @@
 import os
 
-EXAMPLE_VARIABLE = os.getenv("DLCS_CUSTOMER_NAME")
+TOPIC_BASE = os.getenv("TOPIC_BASE")
