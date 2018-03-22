@@ -113,7 +113,3 @@ def manifests_by_topic_async(elucidate='https://elucidate.dlcs-ida.org/', topic=
     if topic:
         return [manifest_from_annotation(anno) for anno in items_by_topic_async(elucidate, topic)]
 
-
-for x in manifests_by_topic_async(elucidate='https://elucidate.dlcs-ida.org/',
-                                  topic='https://omeka.dlcs-ida.org/s/ida/page/topics/virtual:norp/indian'):
-    print(x)
