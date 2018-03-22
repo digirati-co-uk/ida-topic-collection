@@ -7,12 +7,12 @@ from aiohttp import ClientSession, TCPConnector
 async def fetch_all(urls):
     """Launch requests for all web pages."""
     tasks = []
-    fetch.start_time = dict() # dictionary of start times for each url
+    fetch.start_time = dict()  # dictionary of start times for each url
     async with ClientSession(connector=TCPConnector(limit=5)) as session:
         for url in urls:
             task = asyncio.ensure_future(fetch(url, session))
-            tasks.append(task) # create list of tasks
-        results = await asyncio.gather(*tasks) # gather task responses
+            tasks.append(task)  # create list of tasks
+        results = await asyncio.gather(*tasks)  # gather task responses
         return results
 
 
@@ -115,5 +115,5 @@ def manifests_by_topic_async(elucidate='https://elucidate.dlcs-ida.org/', topic=
 
 
 for x in manifests_by_topic_async(elucidate='https://elucidate.dlcs-ida.org/',
-                            topic='https://omeka.dlcs-ida.org/s/ida/page/topics/virtual:norp/indian'):
+                                  topic='https://omeka.dlcs-ida.org/s/ida/page/topics/virtual:norp/indian'):
     print(x)
