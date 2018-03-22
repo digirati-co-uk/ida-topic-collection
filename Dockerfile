@@ -6,7 +6,7 @@ RUN apk add --update --no-cache --virtual=run-deps \
   python3 \
   nginx
 
-ENV EXAMPLE_VARIABLE example_value
+ENV TOPIC_BASE https://omeka.dlcs-ida.org/s/ida/page/topics/
 
 WORKDIR /opt/app
 CMD ["/opt/app/run.sh"]
