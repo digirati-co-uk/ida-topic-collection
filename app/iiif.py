@@ -1,5 +1,6 @@
 from collections import OrderedDict
-from flask import make_response
+import json
+import requests
 
 
 def json_get(iiif_uri):
@@ -17,7 +18,7 @@ def json_get(iiif_uri):
         return r.status_code, None
 
 
-def process_manifest(manifest, get=False):
+def process_manifest(manifest_uri, get=False):
     """
     Get label from a manifest, where the target of a
     bookmarking annotation is of type manifest.
@@ -26,29 +27,24 @@ def process_manifest(manifest, get=False):
     2) Parse returned JSON-LD
     3) Generate a simple OrderedDict to go in the Collection
 
-    :param manifest: annotation dictionary
+    :param manifest_uri: manifest id
+    :param get: boolean, if False, return empty label and don't dereference the manifest @id
     :return: Ordered Dict with manifest @id, label, and @type
     """
-    if manifest:
+    label = "-"
+    id = manifest_uri
+    if manifest_uri:
         if get:
-            _, m_json = json_get(manifest['target']['id'])
-            if m_json:
-                if 'label' in m_json:
-                    label = m_json['label']
-                else:
-                    label = '-'
-                id = m_json['@id']
-        else:
-            label = None
-            id = manifest
+            _, m_json = json_get(manifest_uri)
+            label = m_json.get("label")
+            id = m_json.get("@id")
         m_dict = OrderedDict()
         m_dict['@id'] = id
         m_dict['@type'] = 'sc:Manifest'
-        if label:
-            m_dict['label'] = label
+        m_dict['label'] = label
         return m_dict
     else:
-        return None
+        return
 
 
 def collection_gen(resources, topic_uri, uri, members=False):
@@ -62,6 +58,7 @@ def collection_gen(resources, topic_uri, uri, members=False):
     :param uri: base URI where the collection can be retrieved
     :param members: Boolean to set whether to use members or manifests. Members
     would allow Collections to be part of the Collection.
+
     :return: OrderedDict for IIIF Collection
     """
     if resources and topic_uri and uri:
