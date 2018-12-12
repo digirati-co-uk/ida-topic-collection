@@ -1,22 +1,21 @@
-FROM alpine:3.6
+FROM python:3-alpine
 
-RUN apk add --update --no-cache --virtual=run-deps \
-  uwsgi \
-  uwsgi-python3 \
-  python3 \
-  nginx
+RUN apk add python3-dev build-base linux-headers pcre-dev uwsgi-python3
 
 ENV TOPIC_BASE https://omeka.dlcs-ida.org/s/ida/page/topics/
 
 WORKDIR /opt/app
-CMD ["/opt/app/run.sh"]
-
-COPY run.sh /opt/app/
-RUN chmod +x /opt/app/run.sh
-
-COPY etc/nginx/default.conf /etc/nginx/conf.d/
-
-COPY app/requirements.txt /opt/app/
-RUN pip3 install --no-cache-dir -r /opt/app/requirements.txt
 
 COPY app /opt/app/
+
+RUN pip install uwsgi
+RUN pip install --no-cache-dir -r /opt/app/requirements.txt
+
+
+CMD [ "uwsgi", "--http", "0.0.0.0:80", \
+               "--protocol", "uwsgi", \
+               "--enable-threads", \
+               "--master", \
+               "--http-timeout", "600", \
+               "--lazy", \
+               "--module", "main:app" ]

@@ -8,7 +8,8 @@ from logzero import logger
 from flask_caching import Cache
 from flask_cors import CORS
 import settings
-
+import logging
+import sys
 
 
 app = Flask(__name__)
@@ -17,7 +18,13 @@ cache = Cache(app, config={"CACHE_TYPE": "filesystem", "CACHE_DIR": "./"})
 
 
 def main():
-    app.run(threaded=True, debug=True, port=5001, host="0.0.0.0")
+    if __name__ == "__main__":
+        logging.basicConfig(
+            stream=sys.stdout,
+            level=logging.DEBUG,
+            format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        )
+        app.run(debug=True)
 
 
 @app.route("/metadata", methods=["GET"])
