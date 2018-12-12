@@ -22,21 +22,25 @@ def main():
 
 @app.route("/metadata", methods=["GET"])
 def metadata():
+    """
+    return request URL for DLCS service checking.
 
+    :return: json
+    """
     logger.info("metadata request received")
 
-    metadata = {
+    mdata = {
         "@context": "http://digirati.com/api/services/metadata.json",
         "@id": request.url,
         "@type": "digirati:ServiceMetadata",
     }
 
-    return jsonify(metadata)
+    return jsonify(mdata)
 
 
 @app.route("/collection/<path:topic>", methods=["GET"])
 @cache.cached(timeout=300)  # 20 second caching.
-def default(topic):
+def default(topic: str):
     if "/" in topic:
         if not settings.TOPIC_BASE.endswith("/"):
             settings.TOPIC_BASE += "/"

@@ -1,9 +1,10 @@
 from collections import OrderedDict
 import json
 import requests
+from typing import Tuple, Optional, Any
 
 
-def json_get(iiif_uri):
+def json_get(iiif_uri: str) -> Tuple[int, Optional[Any]]:
     """
     Return an OrderedDict from a URI which returns JSON.
 
@@ -18,7 +19,7 @@ def json_get(iiif_uri):
         return r.status_code, None
 
 
-def process_manifest(manifest_uri, get=False):
+def process_manifest(manifest_uri: str, get: bool=False) -> Optional[dict]:
     """
     Get label from a manifest, where the target of a
     bookmarking annotation is of type manifest.
@@ -47,7 +48,7 @@ def process_manifest(manifest_uri, get=False):
         return
 
 
-def collection_gen(resources, topic_uri, uri, members=False):
+def collection_gen(resources: list, topic_uri: str, uri: str, members: bool=False) -> Optional[Any]:
     """
     Generate an OrderedDict for a IIIF Presentation API collection from
     a list of manifest Ordered Dicts (with @type, @id, and label),
