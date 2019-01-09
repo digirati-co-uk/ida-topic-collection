@@ -1,4 +1,4 @@
-FROM python:3-alpine
+FROM alpine:3.6
 
 RUN apk add --update --no-cache --virtual=run-deps python3-dev build-base linux-headers pcre-dev uwsgi uwsgi-http uwsgi-python3 ca-certificates
 
