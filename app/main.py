@@ -1,5 +1,4 @@
 import base64
-
 from pyelucidate.pyelucidate import async_manifests_by_topic
 from flask import Flask
 from flask import request, jsonify, abort
@@ -10,6 +9,7 @@ from flask_cors import CORS
 import settings
 import logging
 import sys
+
 
 
 app = Flask(__name__)
@@ -46,7 +46,7 @@ def metadata():
 
 
 @app.route("/collection/<path:topic>", methods=["GET"])
-@cache.cached(timeout=300)  # 20 second caching.
+@cache.cached(timeout=300)  # 5 minutes caching.
 def default(topic: str):
     if "/" in topic:
         if not settings.TOPIC_BASE.endswith("/"):
@@ -58,7 +58,7 @@ def default(topic: str):
     manifests = [
         process_manifest(m)
         for m in (
-            set(async_manifests_by_topic(topic=t, elucidate="https://elucidate.dlcs-ida.org/"))
+            set(async_manifests_by_topic(topic=t, elucidate=settings.ELUCIDATE))
         )
     ]
     collection = collection_gen(
