@@ -5,8 +5,11 @@ from flask import request, jsonify, abort
 from iiif import collection_gen, process_manifest
 from logzero import logger
 from flask_caching import Cache
-import settings
 from flask_cors import CORS
+import settings
+import logging
+import sys
+
 
 
 app = Flask(__name__)
@@ -15,26 +18,36 @@ cache = Cache(app, config={"CACHE_TYPE": "filesystem", "CACHE_DIR": "./"})
 
 
 def main():
-    app.run(threaded=True, debug=True, port=5001, host="0.0.0.0")
+    if __name__ == "__main__":
+        logging.basicConfig(
+            stream=sys.stdout,
+            level=logging.DEBUG,
+            format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
+        )
+        app.run(debug=True)
 
 
 @app.route("/metadata", methods=["GET"])
 def metadata():
+    """
+    return request URL for DLCS service checking.
 
+    :return: json
+    """
     logger.info("metadata request received")
 
-    metadata = {
+    mdata = {
         "@context": "http://digirati.com/api/services/metadata.json",
         "@id": request.url,
         "@type": "digirati:ServiceMetadata",
     }
 
-    return jsonify(metadata)
+    return jsonify(mdata)
 
 
 @app.route("/collection/<path:topic>", methods=["GET"])
-@cache.cached(timeout=300)  # 5 minutes caching
-def default(topic):
+@cache.cached(timeout=300)  # 5 minutes caching.
+def default(topic: str):
     if "/" in topic:
         if not settings.TOPIC_BASE.endswith("/"):
             settings.TOPIC_BASE += "/"
@@ -44,7 +57,9 @@ def default(topic):
     logger.info("Request received")
     manifests = [
         process_manifest(m)
-        for m in async_manifests_by_topic(topic=t, elucidate=settings.ELUCIDATE)
+        for m in (
+            set(async_manifests_by_topic(topic=t, elucidate=settings.ELUCIDATE))
+        )
     ]
     collection = collection_gen(
         resources=manifests, topic_uri=str(t), uri=request.url, members=True
