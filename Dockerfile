@@ -1,6 +1,6 @@
 FROM alpine:3.6
 
-RUN apk add --update --no-cache --virtual=run-deps python3-dev build-base linux-headers pcre-dev uwsgi uwsgi-http uwsgi-python3
+RUN apk add --update --no-cache --virtual=run-deps python3-dev build-base linux-headers pcre-dev uwsgi uwsgi-http uwsgi-python3 ca-certificates
 
 ENV TOPIC_BASE https://omeka.dlcs-ida.org/s/ida/page/topics/
 
