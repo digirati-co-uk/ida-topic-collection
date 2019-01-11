@@ -30,7 +30,7 @@ The shell script above will spin up the service on port 3000.
 
 ## Contribution Guidelines
 
-ida-topic-collection has been tested using Python 3.5+. 
+ida-topic-collection has been tested using Python 3.6+. 
 
 Feel free to raise Github issues. 
 
